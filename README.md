@@ -1,5 +1,4 @@
 # LM
-Proyecto web simple para monitorear activos (Dolares y Euros).
 
 <img width="1023" height="599" alt="Screenshot_1" src="https://github.com/user-attachments/assets/afeabe5c-1355-4b9a-8578-f1a4e1e7aec3" />
 
@@ -20,15 +19,6 @@ Desarrollado con ❤️ por **CristianXDev**.
 ---
 
 > **Nota:** Este proyecto se encuentra en su versión inicial (V0.1). Las funcionalidades de analítica histórica y notificaciones están actualmente en fase de planificación.
-
----
-
-### ¿Cómo usar este README?
-1. Crea un archivo llamado `README.md` en la raíz de tu proyecto.
-2. Pega el código de arriba.
-3. Haz un `git add .`, `git commit -m "docs: agregar README detallado"` y finalmente `git¡Claro! He diseñado un `README.md` con una estética profesional y técnica que encaja perfectamente con el estilo "Developer" de tu proyecto. 
-
-Puedes copiar y pegar el siguiente contenido en tu archivo `README.md`:
 
 ---
 
