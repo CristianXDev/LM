@@ -25,13 +25,13 @@
 
 Para la construcción de este monitor se utilizaron en el frontend:
 
-*   **HTML5 & CSS3:**
-*   **Bootstrap 5:**
-*   **JavaScript (Vanilla):**
-*   **AOS (Animate On Scroll):**
-*   **HTML5 Canvas:**
-*   **Geist Mono & Geist (Font):**
-*   **Bootstrap Icons:**
+*   **HTML5 & CSS3**
+*   **Bootstrap 5**
+*   **JavaScript (Vanilla)**
+*   **AOS (Animate On Scroll)**
+*   **HTML5 Canvas**
+*   **Geist Mono & Geist (Font)**
+*   **Bootstrap Icons**
 
 ---
 
