@@ -86,11 +86,13 @@ body {
 }
 
 /* Ajuste del logo para que cambie de color en hover si es necesario */
-.btn-github-tech svg {
+.btn-github-tech i{
+    margin:-2px 5px 0 0;
+    font-size:15px;
     transition: transform 0.3s ease;
 }
 
-.btn-github-tech:hover svg {
+.btn-github-tech:hover i {
     transform: rotate(10deg) scale(1.1);
 }
 
