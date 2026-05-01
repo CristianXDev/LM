@@ -6,7 +6,7 @@
 
 **LiveMonitor (LM)** es una plataforma web moderna diseñada para el seguimiento dinámico de indicadores económicos. El sistema permite visualizar de forma limpia y eficiente las tasas de cambio del **Dólar (USD)** y **Euro (EUR)** frente al **Bolívar (VES)**, comparando los valores oficiales del BCV y el mercado paralelo.
 
-**Proyecto:**https://lm-beige-two.vercel.app/
+**URL del Proyecto:** https://lm-beige-two.vercel.app/
 
 ![Estado del Proyecto](https://img.shields.io/badge/Estado-En_Desarrollo-green?style=for-the-badge)
 ![Versión](https://img.shields.io/badge/Versión-0.1-blue?style=for-the-badge)
