@@ -2,26 +2,6 @@
 
 <img width="1023" height="599" alt="Screenshot_1" src="https://github.com/user-attachments/assets/afeabe5c-1355-4b9a-8578-f1a4e1e7aec3" />
 
-## 🗺️ Roadmap (Próximamente)
-
-- [ ] **Webhooks:** Integración con Telegram para alertas automáticas.
-- [ ] **Histórico de Valoración:** Gráficas interactivas para analizar la evolución de las tasas.
-- [ ] **Calculadora:** Conversor de moneda integrado basado en la tasa seleccionada.
-
----
-
-## 👤 Autor
-
-Desarrollado con ❤️ por **CristianXDev**.
-
-*   **LinkedIn:** [cristianxdev](https://www.linkedin.com/in/cristianxdev)
-
----
-
-> **Nota:** Este proyecto se encuentra en su versión inicial (V0.1). Las funcionalidades de analítica histórica y notificaciones están actualmente en fase de planificación.
-
----
-
 # 💹 LiveMonitor | Tracking Financiero en Tiempo Real
 
 **LiveMonitor (LM)** es una plataforma web moderna diseñada para el seguimiento dinámico de indicadores económicos. El sistema permite visualizar de forma limpia y eficiente las tasas de cambio del **Dólar (USD)** y **Euro (EUR)** frente al **Bolívar (VES)**, comparando los valores oficiales del BCV y el mercado paralelo.
@@ -64,5 +44,25 @@ LM/
 │   ├── main.js       # Inicialización de componentes y animaciones
 │   └── prices.js     # Lógica de consumo de API y actualización de tasas
 ├── img/
+```
+---
+
+## 🗺️ Roadmap (Próximamente)
+
+- [ ] **Webhooks:** Integración con Telegram para alertas automáticas.
+- [ ] **Histórico de Valoración:** Gráficas interactivas para analizar la evolución de las tasas.
+- [ ] **Calculadora:** Conversor de moneda integrado basado en la tasa seleccionada.
+
+---
+
+## 👤 Autor
+
+Desarrollado con ❤️ por **CristianXDev**.
+
+*   **LinkedIn:** [cristianxdev](https://www.linkedin.com/in/cristianxdev)
+
+---
+
+> **Nota:** Este proyecto se encuentra en su versión inicial (V0.1). Las funcionalidades de analítica histórica y notificaciones están actualmente en fase de planificación.
 │   └── logo.svg      # Identidad visual del proyecto
 └── index.html        # Estructura principal de la aplicación
