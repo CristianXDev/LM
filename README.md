@@ -64,5 +64,3 @@ Desarrollado con ❤️ por **CristianXDev**.
 ---
 
 > **Nota:** Este proyecto se encuentra en su versión inicial (V0.1). Las funcionalidades de analítica histórica y notificaciones están actualmente en fase de planificación.
-│   └── logo.svg      # Identidad visual del proyecto
-└── index.html        # Estructura principal de la aplicación
