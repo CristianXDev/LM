@@ -23,15 +23,15 @@
 
 ## 🛠️ Tecnologías Utilizadas
 
-Para la construcción de este monitor se utilizaron herramientas de vanguardia en el desarrollo frontend:
+Para la construcción de este monitor se utilizaron en el frontend:
 
-*   **HTML5 & CSS3:** Estructura semántica y estilos personalizados para una UI única.
-*   **Bootstrap 5:** Framework de diseño para garantizar un layout sólido y componentes responsivos.
-*   **JavaScript (Vanilla):** Lógica para la gestión de datos, manipulación del DOM y manejo de precios.
-*   **AOS (Animate On Scroll):** Librería para animaciones de entrada fluidas al navegar por la página.
-*   **HTML5 Canvas:** Utilizado para el fondo dinámico interactivo en el header.
-*   **Geist Mono & Geist:** Tipografías modernas para una legibilidad técnica superior.
-*   **Bootstrap Icons:** Set de iconos vectoriales para la interfaz social y de navegación.
+*   **HTML5 & CSS3:**
+*   **Bootstrap 5:**
+*   **JavaScript (Vanilla):**
+*   **AOS (Animate On Scroll):**
+*   **HTML5 Canvas:**
+*   **Geist Mono & Geist (Font):**
+*   **Bootstrap Icons:**
 
 ---
 
