@@ -1,0 +1,476 @@
+:root {
+    --bg: #FFFFFF;
+    --fg: #1A1A1A;
+    --accents-1: #FAFAFA;
+    --accents-2: #EAEAEA;
+    --accents-3: #999999;
+    --geist-font: 'Geist', sans-serif;
+    --geist-mono: 'Geist Mono', monospace;
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+/*Estilización de la Barra de Scroll*/
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accents-2);
+    border-radius: 0px;
+    border: 1px solid var(--bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--fg);
+}
+
+/*Soporte para Firefox*/
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accents-2) var(--bg);
+}
+
+body {
+    font-family: var(--geist-font);
+    background-color: var(--bg);
+    color: var(--fg);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/*Navbar*/
+.navbar {
+    padding: 1.2rem 0;
+    transition: padding 0.4s ease, background 0.4s ease;
+    border-bottom: 1px solid transparent;
+    will-change: transform, background-color; /* Optimización de rendimiento */
+}
+
+.navbar.scrolled {
+    padding: 0.7rem 0;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(8px); /* Reducido para suavidad */
+    border-bottom: 1px solid var(--accents-2);
+}
+
+.navbar-brand { font-weight: 800; letter-spacing: -0.05em; font-size: 1.4rem; }
+.nav-link { font-size: 0.9rem; font-weight: 500; color: var(--accents-3) !important; transition: var(--transition); }
+.nav-link:hover { color: var(--fg) !important; }
+
+/* Botón GitHub Estilizado */
+.btn-github-tech {
+    background: var(--fg); /* Fondo negro */
+    color: var(--bg);      /* Texto blanco */
+    padding: 0.6rem 1.4rem;
+    font-size: 0.75rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--fg);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.btn-github-tech:hover {
+    background: transparent;
+    color: var(--fg);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Ajuste del logo para que cambie de color en hover si es necesario */
+.btn-github-tech svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-github-tech:hover svg {
+    transform: rotate(10deg) scale(1.1);
+}
+
+@media (max-width: 991px) {
+    .btn-github-tech {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem;
+    }
+}
+
+#header {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: radial-gradient(circle at 50% 50%, #ffffff 0%, #fcfcfc 100%);
+    overflow: hidden;
+}
+
+#hero-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.header-container { position: relative; z-index: 2; width: 100%; }
+.brand-huge { font-size: clamp(3rem, 10vw, 6rem); font-weight: 800; letter-spacing: -0.07em; line-height: 1; }
+
+
+/*Price Badges*/
+.price-badge {
+    font-family: var(--geist-mono);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--accents-2);
+    padding: 1rem 1.2rem;
+    border-radius: 0px;
+    width: 100% !important;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.price-badge:hover {
+    border-color: var(--fg);
+    background: var(--bg);
+    transform: translateX(-5px); 
+    box-shadow: 10px 10px 0px var(--accents-1);
+}
+
+/* Indicador de Status Live Animado */
+.price-badge::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 6px;
+    height: 6px;
+    background: #00ff88;
+    border-radius: 50%;
+    animation: pulse-live 1.5s infinite;
+}
+
+@keyframes pulse-live {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+}
+
+.price-label {
+    font-size: 0.6rem;
+    color: var(--accents-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.price-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+/*Simulación de tendencia*/
+.price-trend {
+    font-size: 0.65rem;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.trend-up { color: #00c853; }
+.trend-neutral { color: var(--accents-3); }
+
+/* Contenedor de badges en grid para mejor orden */
+.price-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Secciones */
+section { padding: 120px 0; position: relative; }
+.section-title { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 3rem; }
+
+/* Service Cards */
+.service-card {
+    border: 1px solid var(--accents-2);
+    padding: 2.5rem;
+    transition: var(--transition);
+    height: 100%;
+    background: var(--bg);
+}
+
+.service-card:hover {
+    background: var(--fg);
+    color: white;
+    z-index: 10;
+}
+
+.service-card:hover .text-secondary { color: rgba(255,255,255,0.7) !important; }
+
+.badge-upcoming {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-style: dashed !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card .badge-upcoming {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--fg);
+    border: 1px solid var(--fg);
+    padding: 2px 8px;
+    opacity: 0.6;
+}
+
+.service-card:hover h5,
+.service-card:hover p,
+.service-card:hover .mono,
+.service-card:hover .badge-upcoming {
+    color: var(--bg) !important;
+    opacity: 1;
+}
+
+.service-card:hover .badge-upcoming {
+    border-color: var(--bg);
+}
+
+.service-card:hover {
+    background-color: var(--fg) !important;
+}
+
+@media (min-width: 992px) {
+    .border-lg-0 {
+        border-left: none !important;
+        border-right: none !important;
+    }
+    .border-end-lg-0 {
+        border-right: none !important;
+    }
+}
+
+/* Tipografía para lo que viene */
+.italic {
+    font-style: italic;
+}
+
+/* Form */
+.form-floating > .form-control { border: none; border-bottom: 1px solid var(--accents-2); border-radius: 0; padding-left: 0; background: transparent; }
+.form-floating > .form-control:focus { box-shadow: none; border-color: var(--fg); }
+
+.btn-dark-tech { background: var(--fg); color: white; border-radius: 0; padding: 1rem 2.5rem; font-weight: 600; border: 1px solid var(--fg); transition: var(--transition); }
+.btn-dark-tech:hover { background: transparent; color: var(--fg); }
+
+.mono { font-family: var(--geist-mono); }
+
+/* Formulario Estilo Técnico */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0
+    border: 1px solid var(--accents-2);
+}
+
+.input-group-tech {
+    position: relative;
+    border: 0.5px solid var(--accents-2);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+
+.input-group-tech:focus-within {
+    background: var(--accents-1);
+    z-index: 2;
+}
+
+.input-group-tech label {
+    display: block;
+    font-family: var(--geist-mono);
+    font-size: 0.65rem;
+    color: var(--accents-3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+}
+
+.input-group-tech input, 
+.input-group-tech textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-weight: 500;
+    color: var(--fg);
+    outline: none;
+    padding: 0;
+}
+
+.input-group-tech textarea {
+    height: 120px;
+    resize: none;
+}
+
+.full-width { grid-column: span 2; }
+
+/* Botón de Envio con Efecto de Carga */
+.btn-submit {
+    background: var(--fg);
+    color: white;
+    border: none;
+    padding: 1.5rem;
+    font-family: var(--geist-mono);
+    font-weight: 600;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-submit:hover {
+    background: #000;
+    padding-left: 2rem;
+}
+
+.btn-submit span::after {
+    content: " ->";
+}
+
+/* Estilo base del botón */
+.btn-social-tech {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    font-size: 1.4rem;
+    color: #ffffff;
+    background-color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto hover general */
+.btn-social-tech:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+/* Colores sólidos específicos al hacer hover */
+
+/* LinkedIn - Azul corporativo */
+.btn-social-tech:has(.bi-linkedin):hover {
+    background-color: #0077b5;
+}
+
+/* GitHub - Negro profundo o gris oscuro */
+.btn-social-tech:has(.bi-github):hover {
+    background-color: #24292e;
+}
+
+/* WhatsApp - Verde vibrante */
+.btn-social-tech:has(.bi-whatsapp):hover {
+    background-color: #25d366;
+}
+
+/* Animación opcional para el icono */
+.btn-social-tech i {
+    line-height: 0; /* Centrado perfecto */
+}
+
+@media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
+}
+
+/* --- AJUSTES DE RESPONSIVIDAD --- */
+
+@media (max-width: 991px) {
+    #header {
+        height: auto; /* Permite que el contenido crezca */
+        padding: 140px 0 80px 0;
+        text-align: center;
+    }
+
+    .header-container .w-75 {
+        width: 100% !important;
+        margin: 0 auto;
+    }
+
+    .brand-huge {
+        margin-bottom: 2rem;
+    }
+
+    .price-grid {
+        margin-top: 3rem;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .price-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .price-badge:hover {
+        transform: none;
+    }
+
+    .service-card {
+        padding: 2rem;
+        border-bottom: 0;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+
+    .input-group-tech {
+        padding: 1.2rem;
+    }
+
+    .btn-submit {
+        padding: 1.2rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Optimización para pantallas muy pequeñas (iPhone SE, etc) */
+@media (max-width: 380px) {
+    .price-value {
+        font-size: 1.4rem;
+    }
+    
+    .brand-huge {
+        font-size: 2.8rem;
+    }
+}

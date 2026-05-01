@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!--META-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--/META-->
+
+    <!--TITULO-->
+    <title>LiveMonitor | Tasas en Tiempo Real y Analítica de Datos</title>
+    <!--/TITULO-->
+
+    <!--BOOTSTRAP-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--/BOOTSTRAP-->
+
+    <!--FONT-->
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap" rel="stylesheet">
+    <!--/FONT-->
+
+    <!--ICON-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!--/ICON-->
+
+    <!--FAVICON-->
+    <link href="img/logo.svg" rel="icon">
+    <!--/FAVICON-->
+
+    <!--AOS ANIMACIONES-->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!--/AOS-->
+
+    <!--HOJA DE ESTILOS-->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <!--/STYLESHEET-->
+</head>
+<body>
+
+    <!--NAVBAR-->
+    <nav class="navbar navbar-expand-lg fixed-top" id="navbar">
+        <div class="container">
+            <div class="d-flex flex-grow-1 flex-lg-grow-0" style="min-width: 160px;">
+                <a class="navbar-brand text-dark" href="#">LM</a>
+            </div>
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                <ul class="navbar-nav gap-lg-4 mx-auto text-center">
+                    <li class="nav-item"><a class="nav-link" href="#header">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                </ul>
+                <div class="d-flex justify-content-center justify-content-lg-end mt-3 mt-lg-0" style="min-width: 160px;">
+                    <a href="https://github.com/CristianXDev" target="_blank" class="btn-github-tech">
+                        <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor" class="me-2">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                        </svg>
+                        <span class="mono">REPOSITORIO</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!--NAVBAR-->
+
+    <!--HEADER-->
+    <header id="header">
+        <canvas id="hero-canvas"></canvas>
+        <div class="container header-container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <span class="mono text-secondary mb-3 d-block">— MONITOR DE DATOS EN VIVO V0.1</span>
+                    <h1 class="brand-huge">Tracking<br>Financiero.</h1>
+                    <p class="text-secondary mt-4 lead w-75">Visualización del precio del dolar y euro en el mercados.</p>
+                </div>
+
+                <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
+                    <div class="row g-3">
+
+                        <!--USD-->
+                        <div class="col-6">
+                            <div class="price-grid">
+                                <div class="price-badge">
+                                    <span class="price-label">USD / VES Oficial</span>
+                                    <span class="price-value" id="usd-oficial">Cargando...</span>
+                                    <div class="price-trend" id="trend-usd-oficial">
+                                        <span class="mono">--</span>
+                                    </div>
+                                </div>
+                                <div class="price-badge">
+                                    <span class="price-label">USD / VES Paralelo</span>
+                                    <span class="price-value" id="usd-paralelo">Cargando...</span>
+                                    <div class="price-trend" id="trend-usd-paralelo">
+                                        <span class="mono">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /USD -->
+
+                        <!--EUR-->
+                        <div class="col-6">
+                            <div class="price-grid">
+                                <div class="price-badge">
+                                    <span class="price-label">EUR / VES Oficial</span>
+                                    <span class="price-value" id="eur-oficial">Cargando...</span>
+                                    <div class="price-trend" id="trend-eur-oficial">
+                                        <span class="mono">--</span>
+                                    </div>
+                                </div>
+                                <div class="price-badge">
+                                    <span class="price-label">EUR / VES Paralelo</span>
+                                    <span class="price-value" id="eur-paralelo">Cargando...</span>
+                                    <div class="price-trend" id="trend-eur-paralelo">
+                                        <span class="mono">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /EUR -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!--/HEADER-->
+
+    <!--SERVICIOS-->
+    <section id="servicios">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Servicios.</h2>
+            <div class="row g-0">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
+                        <div class="mono mb-4 text-secondary">01/</div>
+                        <h5>Monitoreo en Tiempo Real</h5>
+                        <p class="text-secondary small">Seguimiento instantáneo de las fluctuaciones del dólar y euro (BCV/Paralelo) con actualización automática.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card" style="border-left: none; border-right: none;">
+                        <div class="mono mb-4 text-secondary">02/</div>
+                        <h5>Webhooks & Notificaciones</h5>
+                        <span class="badge-upcoming">PRÓXIMAMENTE</span>
+                        <p class="text-secondary small">Integración de alertas automáticas para grupos de Telegram o canales corporativos ante cambios bruscos en la tasa.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card">
+                        <div class="mono mb-4 text-secondary">03/</div>
+                        <h5>Histórico de Valoración</h5>
+                        <span class="badge-upcoming">PRÓXIMAMENTE</span>
+                        <p class="text-secondary small">Análisis comparativo de datos históricos para proyectar tendencias y calcular promedios ponderados del mercado local.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/SERVICES-->
+
+    <!--CONTACTO-->
+    <section id="contacto" class="border-top overflow-hidden">
+        <div class="container">
+            <div class="row">
+   
+             <div class="col-lg-4" data-aos="fade-right" data-aos-duration="1000">
+                <span class="mono text-secondary mb-3 d-block" data-aos="fade-in" data-aos-delay="400">// API_ENDPOINT: CONTACTO</span>
+                <h2 class="section-title">Hablemos.</h2>
+                <p class="text-secondary w-75">Transforma tu idea en realidad con una web a medida. ¡Hablemos y diseñemos el presupuesto que mejor se adapte a tu proyecto!</p>
+
+                <div class="d-flex gap-3 mt-4" data-aos="fade-up" data-aos-delay="600">
+                    <a href="https://www.linkedin.com/in/cristianxdev" target="_blank" class="btn-social-tech">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/CristianXDev" target="_blank" class="btn-social-tech">
+                        <i class="bi bi-github"></i>
+                    </a>
+                    <a href="#" target="_blank" class="btn-social-tech">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+                <div class="col-lg-8" data-aos="fade-up" data-aos-delay="300" data-aos-duration="1200">
+                    <form id="contactForm">
+                        <div class="contact-grid">
+                            <div class="input-group-tech" data-aos="fade-in" data-aos-delay="500">
+                                <label for="name">Nombre_Usuario</label>
+                                <input type="text" id="name" name="name" placeholder="ej. Alexander" required>
+                            </div>
+                            <div class="input-group-tech" data-aos="fade-in" data-aos-delay="600">
+                                <label for="email">Email_Usuario</label>
+                                <input type="email" id="email" name="email" placeholder="usuario@dominio.com" required>
+                            </div>
+                            <div class="input-group-tech full-width" data-aos="fade-in" data-aos-delay="700">
+                                <label for="project">Alcance_Proyecto</label>
+                                <input type="text" id="project" name="project" placeholder="¿Qué estás construyendo?">
+                            </div>
+                            <div class="input-group-tech full-width" data-aos="fade-in" data-aos-delay="800">
+                                <label for="msg">Cuerpo_Mensaje</label>
+                                <textarea id="msg" name="msg" placeholder="Describe los requerimientos técnicos..."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit" data-aos="zoom-in-up" data-aos-delay="900" data-aos-anchor-placement="bottom-bottom">
+                            <span>EJECUTAR ENVÍO</span>
+                            <small class="mono opacity-50">ESTADO: LISTO</small>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--/CONTACT-->
+
+    <!--FOOTER-->
+    <footer class="py-5 text-center border-top">
+        <span class="mono small text-secondary">LiveMonitor // Hecho por <a class="fw-bold text-decoration-none text-dark" href="https://github.com/CristianXDev/">CristianXDev<a> con <span class="text-danger">❤</span> // 2026</span>
+    </footer>
+    <!--/FOOTER-->
+
+    <!--JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/prices.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Inicializar animaciones AOS
+        AOS.init({ duration: 800, once: true });
+    </script>
+    <!--/JS-->
+</body>
+</html>
