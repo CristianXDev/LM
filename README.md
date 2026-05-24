@@ -1,6 +1,6 @@
 # LM
 
-<img width="1023" height="599" alt="Screenshot_1" src="https://github.com/user-attachments/assets/afeabe5c-1355-4b9a-8578-f1a4e1e7aec3" />
+<p><img width="1365" height="767" alt="Screenshot_1" src="https://github.com/user-attachments/assets/ddb57ba5-1119-4d3f-88d4-5fc77aaeaf7d" /></p>
 
 # 💹 LiveMonitor | Seguimiento Financiero en Tiempo Real
 
