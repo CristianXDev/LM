@@ -1,23 +1,24 @@
-// Chatbot LiveMonitor with Groq API Integration
+// Chatbot LiveMonitor con Integración de API Groq y Correcciones de Audio
 
-// Class constructor
 class LiveMonitorChatbot {
-  // Constructor
   constructor() {
     this.isOpen = false;
     this.isRecording = false;
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.exchangeRates = null;
-    this.groqApiKey =
-      "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";
+    // ADVERTENCIA: Nunca dejes tu API key en el código frontend en producción.
+    this.groqApiKey = "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";
     this.conversationHistory = [];
     this.maxHistory = 10;
+
+    // CORRECCIÓN 1: Variables para el formato y tiempo de audio
+    this.currentMimeType = '';
+    this.recordStartTime = 0;
 
     this.init();
   }
 
-  // Initialize chatbot
   init() {
     this.bindEvents();
     this.loadExchangeRates();
@@ -25,28 +26,16 @@ class LiveMonitorChatbot {
     this.addWelcomeMessage();
   }
 
-  // Bind DOM events
   bindEvents() {
-    document
-      .getElementById("chatbotToggle")
-      .addEventListener("click", () => this.toggleChat());
-    document
-      .getElementById("chatbotClose")
-      .addEventListener("click", () => this.closeChat());
-    document
-      .getElementById("chatbotSend")
-      .addEventListener("click", () => this.sendMessage());
-    document
-      .getElementById("chatbotInput")
-      .addEventListener("keypress", (e) => {
-        if (e.key === "Enter") this.sendMessage();
-      });
-    document
-      .getElementById("chatbotAudio")
-      .addEventListener("click", () => this.toggleRecording());
+    document.getElementById("chatbotToggle").addEventListener("click", () => this.toggleChat());
+    document.getElementById("chatbotClose").addEventListener("click", () => this.closeChat());
+    document.getElementById("chatbotSend").addEventListener("click", () => this.sendMessage());
+    document.getElementById("chatbotInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") this.sendMessage();
+    });
+    document.getElementById("chatbotAudio").addEventListener("click", () => this.toggleRecording());
   }
 
-  // Toggle chat open/close
   toggleChat() {
     this.isOpen = !this.isOpen;
     const container = document.querySelector(".chatbot-container");
@@ -57,13 +46,11 @@ class LiveMonitorChatbot {
     }
   }
 
-  // Close chat
   closeChat() {
     this.isOpen = false;
     document.querySelector(".chatbot-container").classList.remove("chat-open");
   }
 
-  // Load exchange rates
   async loadExchangeRates() {
     const CACHE_KEY = "dolar_data_cache";
     const cached = localStorage.getItem(CACHE_KEY);
@@ -103,7 +90,6 @@ class LiveMonitorChatbot {
     }
   }
 
-  // Build rates context string
   getRatesContext() {
     if (!this.exchangeRates) return "No hay datos de tasas disponibles.";
 
@@ -112,7 +98,6 @@ class LiveMonitorChatbot {
     return `TASAS ACTUALES (VES):\n- Dólar Oficial: ${uOfi?.promedio?.toFixed(2) || "N/A"} Bs\n- Dólar Paralelo: ${uPara?.promedio?.toFixed(2) || "N/A"} Bs\n- Euro Oficial: ${eOfi?.promedio?.toFixed(2) || "N/A"} Bs\n- Euro Paralelo: ${ePara?.promedio?.toFixed(2) || "N/A"} Bs`;
   }
 
-  // Save history to localStorage
   saveHistory() {
     localStorage.setItem(
       "chatbot_history",
@@ -120,7 +105,6 @@ class LiveMonitorChatbot {
     );
   }
 
-  // Load history from localStorage
   loadHistory() {
     const saved = localStorage.getItem("chatbot_history");
     if (saved) {
@@ -128,13 +112,11 @@ class LiveMonitorChatbot {
     }
   }
 
-  // Add message to history
   addToHistory(role, content) {
     this.conversationHistory.push({ role, content });
     this.saveHistory();
   }
 
-  // Send message from user
   async sendMessage() {
     const input = document.getElementById("chatbotInput");
     const message = input.value.trim();
@@ -160,7 +142,6 @@ class LiveMonitorChatbot {
     }
   }
 
-  // Get response from Groq API
   async getGroqResponse(userMessage) {
     const ratesContext = this.getRatesContext();
 
@@ -184,7 +165,7 @@ Ejemplos:
 
     const messages = [
       { role: "system", content: systemPrompt },
-      ...this.conversationHistory.slice(-6), // Last 6 messages for context
+      ...this.conversationHistory.slice(-6),
       { role: "user", content: userMessage },
     ];
 
@@ -218,7 +199,6 @@ Ejemplos:
     }
   }
 
-  // Calculate conversion locally
   calculateConversion(message) {
     if (!this.exchangeRates) {
       return "Sin datos de tasas. Verifica en la página principal.";
@@ -241,56 +221,34 @@ Ejemplos:
 
     const amount = parseFloat(amountMatch[1].replace(",", "."));
 
-    const isEuro =
-      normalizedMsg.includes("euro") || normalizedMsg.includes("eur");
-    const isDollar =
-      normalizedMsg.includes("dolar") ||
-      normalizedMsg.includes("usd") ||
-      normalizedMsg.includes("$");
-
+    const isEuro = normalizedMsg.includes("euro") || normalizedMsg.includes("eur");
+    const isDollar = normalizedMsg.includes("dolar") || normalizedMsg.includes("usd") || normalizedMsg.includes("$");
     const isOficial = normalizedMsg.includes("oficial");
     const isParalelo = normalizedMsg.includes("paralelo");
 
     if (isEuro) {
-      if (isOficial) {
-        return `${amount} EUR = ${(amount * rates.euroOficial).toFixed(2)} Bs (Oficial)`;
-      }
-      if (isParalelo) {
-        return `${amount} EUR = ${(amount * rates.euroParalelo).toFixed(2)} Bs (Paralelo)`;
-      }
+      if (isOficial) return `${amount} EUR = ${(amount * rates.euroOficial).toFixed(2)} Bs (Oficial)`;
+      if (isParalelo) return `${amount} EUR = ${(amount * rates.euroParalelo).toFixed(2)} Bs (Paralelo)`;
       return `${amount} EUR = ${(amount * rates.euroOficial).toFixed(2)} Bs (Oficial) / ${(amount * rates.euroParalelo).toFixed(2)} Bs (Paralelo)`;
     }
 
     if (isDollar || (!isEuro && amountMatch)) {
-      if (isOficial) {
-        return `${amount} USD = ${(amount * rates.dolarOficial).toFixed(2)} Bs (Oficial)`;
-      }
-      if (isParalelo) {
-        return `${amount} USD = ${(amount * rates.dolarParalelo).toFixed(2)} Bs (Paralelo)`;
-      }
+      if (isOficial) return `${amount} USD = ${(amount * rates.dolarOficial).toFixed(2)} Bs (Oficial)`;
+      if (isParalelo) return `${amount} USD = ${(amount * rates.dolarParalelo).toFixed(2)} Bs (Paralelo)`;
       return `${amount} USD = ${(amount * rates.dolarOficial).toFixed(2)} Bs (Oficial) / ${(amount * rates.dolarParalelo).toFixed(2)} Bs (Paralelo)`;
     }
 
     if (/cuanto.*son|cuanto.*vale|valor|precio/i.test(message)) {
-      if (/dolar.*oficial/i.test(message)) {
-        return `Dólar Oficial: ${rates.dolarOficial.toFixed(2)} Bs`;
-      }
-      if (/dolar.*paralelo/i.test(message)) {
-        return `Dólar Paralelo: ${rates.dolarParalelo.toFixed(2)} Bs`;
-      }
-      if (/euro.*oficial/i.test(message)) {
-        return `Euro Oficial: ${rates.euroOficial.toFixed(2)} Bs`;
-      }
-      if (/euro.*paralelo/i.test(message)) {
-        return `Euro Paralelo: ${rates.euroParalelo.toFixed(2)} Bs`;
-      }
+      if (/dolar.*oficial/i.test(message)) return `Dólar Oficial: ${rates.dolarOficial.toFixed(2)} Bs`;
+      if (/dolar.*paralelo/i.test(message)) return `Dólar Paralelo: ${rates.dolarParalelo.toFixed(2)} Bs`;
+      if (/euro.*oficial/i.test(message)) return `Euro Oficial: ${rates.euroOficial.toFixed(2)} Bs`;
+      if (/euro.*paralelo/i.test(message)) return `Euro Paralelo: ${rates.euroParalelo.toFixed(2)} Bs`;
       return `USD Oficial: ${rates.dolarOficial.toFixed(2)} Bs | Paralelo: ${rates.dolarParalelo.toFixed(2)} Bs`;
     }
 
     return "¿A qué tasa quieres convertir? Ej: '10 dólares a la tasa oficial'";
   }
 
-  // Show typing indicator
   showTypingIndicator() {
     const messagesContainer = document.getElementById("chatbotMessages");
     const indicator = document.createElement("div");
@@ -301,13 +259,11 @@ Ejemplos:
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 
-  // Hide typing indicator
   hideTypingIndicator() {
     const indicator = document.getElementById("typingIndicator");
     if (indicator) indicator.remove();
   }
 
-  // Add text message to UI
   addMessage(text, sender) {
     const messagesContainer = document.getElementById("chatbotMessages");
     const messageDiv = document.createElement("div");
@@ -318,7 +274,6 @@ Ejemplos:
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 
-  // Add audio message to UI
   addAudioMessage(audioBlob, duration) {
     const messagesContainer = document.getElementById("chatbotMessages");
     const messageDiv = document.createElement("div");
@@ -347,7 +302,6 @@ Ejemplos:
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }
 
-  // Add welcome message
   addWelcomeMessage() {
     setTimeout(() => {
       this.addMessage(
@@ -357,7 +311,17 @@ Ejemplos:
     }, 1000);
   }
 
-  // Toggle audio recording
+  // CORRECCIÓN 1: Función auxiliar para detectar el mejor formato soportado
+  getSupportedMimeType() {
+    const types = [
+      'audio/webm;codecs=opus',
+      'audio/mp4', // Vital para Safari / iOS
+      'audio/ogg;codecs=opus',
+      'audio/webm'
+    ];
+    return types.find(type => MediaRecorder.isTypeSupported(type)) || '';
+  }
+
   async toggleRecording() {
     const audioBtn = document.getElementById("chatbotAudio");
     const indicator = document.getElementById("recordingIndicator");
@@ -367,7 +331,10 @@ Ejemplos:
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
-        this.mediaRecorder = new MediaRecorder(stream);
+
+        // CORRECCIÓN 1: Usar formato compatible detectado
+        this.currentMimeType = this.getSupportedMimeType();
+        this.mediaRecorder = new MediaRecorder(stream, { mimeType: this.currentMimeType });
         this.audioChunks = [];
 
         this.mediaRecorder.ondataavailable = (event) => {
@@ -375,13 +342,19 @@ Ejemplos:
         };
 
         this.mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(this.audioChunks, { type: "audio/webm" });
-          const duration = this.audioChunks.length * 0.5;
-          this.addAudioMessage(audioBlob, duration);
+          // CORRECCIÓN 3: Calcular la duración real
+          const durationSeconds = (Date.now() - this.recordStartTime) / 1000;
+
+          // CORRECCIÓN 1: Crear Blob con el mimeType correcto y asignar extensión
+          const audioBlob = new Blob(this.audioChunks, { type: this.currentMimeType });
+          const fileExtension = this.currentMimeType.includes('mp4') ? 'm4a' : 'webm';
+
+          this.addAudioMessage(audioBlob, durationSeconds);
 
           this.showTypingIndicator();
           try {
-            const transcription = await this.transcribeAudio(audioBlob);
+            // CORRECCIÓN 2: Enviar extensión
+            const transcription = await this.transcribeAudio(audioBlob, fileExtension);
             this.hideTypingIndicator();
             this.addMessage(transcription, "user");
             this.addToHistory("user", transcription);
@@ -392,9 +365,11 @@ Ejemplos:
             this.addMessage(response, "bot");
             this.addToHistory("assistant", response);
           } catch (error) {
+            // CORRECCIÓN 4: Manejo seguro de errores, evita enviar basura al LLM
+            console.error("Fallo en el flujo de voz:", error);
             this.hideTypingIndicator();
             this.addMessage(
-              "No pude transcribir el audio. Escribe tu mensaje.",
+              "Lo siento, hubo un error procesando el audio. Por favor, intenta de nuevo o escribe tu mensaje.",
               "bot",
             );
           }
@@ -403,12 +378,15 @@ Ejemplos:
         };
 
         this.mediaRecorder.start();
+        // CORRECCIÓN 3: Registrar el tiempo de inicio
+        this.recordStartTime = Date.now();
+
         this.isRecording = true;
         audioBtn.classList.add("recording");
         indicator.classList.add("active");
       } catch (error) {
         console.error("Error accessing microphone:", error);
-        alert("No se pudo acceder al micrófono. Verifica los permisos.");
+        alert("No se pudo acceder al micrófono. Verifica los permisos de tu navegador.");
       }
     } else {
       this.mediaRecorder.stop();
@@ -418,12 +396,14 @@ Ejemplos:
     }
   }
 
-  // Transcribe audio with API
-  async transcribeAudio(audioBlob) {
+  // CORRECCIÓN 2: Idioma, temperatura y extensión dinámica añadidos
+  async transcribeAudio(audioBlob, fileExtension = 'webm') {
     try {
       const formData = new FormData();
-      formData.append("file", audioBlob, "audio.webm");
+      formData.append("file", audioBlob, `audio.${fileExtension}`);
       formData.append("model", "whisper-large-v3");
+      formData.append("language", "es"); // Forza el español
+      formData.append("temperature", "0.0"); // Reduce alucinaciones con ruido
 
       const response = await fetch(
         "https://api.groq.com/openai/v1/audio/transcriptions",
@@ -436,25 +416,28 @@ Ejemplos:
         },
       );
 
-      if (!response.ok) throw new Error("Transcription failed");
+      // CORRECCIÓN 4: Leer el mensaje de error real de la API si falla
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || "Transcription failed by API");
+      }
 
       const data = await response.json();
       return data.text || "No se pudo transcribir el audio.";
     } catch (error) {
       console.error("Transcription error:", error);
-      return "Error al transcribir el audio.";
+      throw error; // Lanzamos el error hacia toggleRecording para cortarlo ahí
     }
   }
 
-  // Format duration seconds to mm:ss
   formatDuration(seconds) {
+    if (isNaN(seconds) || seconds < 0) seconds = 0;
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 }
 
-// Init chatbot on DOM ready
 document.addEventListener("DOMContentLoaded", () => {
   new LiveMonitorChatbot();
 });

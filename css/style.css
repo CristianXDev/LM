@@ -986,3 +986,32 @@ section {
         font-size: 1rem;
     }
 }
+
+.hero-cat-wrapper {
+    width: 120px;
+    flex-shrink: 0;
+    pointer-events: none;
+}
+
+.hero-cat-video {
+    margin: 0 0 0 -20px;
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+@media (max-width: 991px) {
+    .hero-cat-wrapper {
+        width: 70px;
+    }
+
+    .d-flex.align-items-center {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .hero-cat-wrapper.ms-3 {
+        margin-left: 0 !important;
+    }
+}
