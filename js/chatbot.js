@@ -1,5 +1,3 @@
-// Chatbot LiveMonitor con Integración de API Groq y Correcciones de Audio
-
 class LiveMonitorChatbot {
   constructor() {
     this.isOpen = false;
@@ -7,12 +5,10 @@ class LiveMonitorChatbot {
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.exchangeRates = null;
-    // ADVERTENCIA: Nunca dejes tu API key en el código frontend en producción.
-    this.groqApiKey = "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";
+
     this.conversationHistory = [];
     this.maxHistory = 10;
 
-    // CORRECCIÓN 1: Variables para el formato y tiempo de audio
     this.currentMimeType = '';
     this.recordStartTime = 0;
 
@@ -156,12 +152,7 @@ INSTRUCCIONES:
 - Si la pregunta es ambigua, pide aclaración específica
 - Usa formato numérico con 2 decimales
 - No des explicaciones largas, solo lo necesario
-- Si se te pide calcular una conversion, usa la taza solicitada teniendo en cuenta decimales
-
-Ejemplos:
-- "10 USD = 360.00 Bs (Dólar Oficial)"
-- "¿A qué tasa quieres convertir? Oficial o Paralelo?"
-- "Las tasas están actualizadas al momento"`;
+- Si se te pide calcular una conversion, usa la taza solicitada teniendo en cuenta decimales`;
 
     const messages = [
       { role: "system", content: systemPrompt },
@@ -171,12 +162,11 @@ Ejemplos:
 
     try {
       const response = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
+        "/api/groq",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${this.groqApiKey}`,
           },
           body: JSON.stringify({
             model: "llama-3.1-8b-instant",
@@ -213,14 +203,12 @@ Ejemplos:
     };
 
     const normalizedMsg = message.toLowerCase().trim();
-
     const amountMatch = normalizedMsg.match(/(\d+(?:[.,]\d+)?)/);
     if (!amountMatch) {
       return "No encontré una cantidad. Ej: '10 dólares a la tasa oficial'";
     }
 
     const amount = parseFloat(amountMatch[1].replace(",", "."));
-
     const isEuro = normalizedMsg.includes("euro") || normalizedMsg.includes("eur");
     const isDollar = normalizedMsg.includes("dolar") || normalizedMsg.includes("usd") || normalizedMsg.includes("$");
     const isOficial = normalizedMsg.includes("oficial");
@@ -236,14 +224,6 @@ Ejemplos:
       if (isOficial) return `${amount} USD = ${(amount * rates.dolarOficial).toFixed(2)} Bs (Oficial)`;
       if (isParalelo) return `${amount} USD = ${(amount * rates.dolarParalelo).toFixed(2)} Bs (Paralelo)`;
       return `${amount} USD = ${(amount * rates.dolarOficial).toFixed(2)} Bs (Oficial) / ${(amount * rates.dolarParalelo).toFixed(2)} Bs (Paralelo)`;
-    }
-
-    if (/cuanto.*son|cuanto.*vale|valor|precio/i.test(message)) {
-      if (/dolar.*oficial/i.test(message)) return `Dólar Oficial: ${rates.dolarOficial.toFixed(2)} Bs`;
-      if (/dolar.*paralelo/i.test(message)) return `Dólar Paralelo: ${rates.dolarParalelo.toFixed(2)} Bs`;
-      if (/euro.*oficial/i.test(message)) return `Euro Oficial: ${rates.euroOficial.toFixed(2)} Bs`;
-      if (/euro.*paralelo/i.test(message)) return `Euro Paralelo: ${rates.euroParalelo.toFixed(2)} Bs`;
-      return `USD Oficial: ${rates.dolarOficial.toFixed(2)} Bs | Paralelo: ${rates.dolarParalelo.toFixed(2)} Bs`;
     }
 
     return "¿A qué tasa quieres convertir? Ej: '10 dólares a la tasa oficial'";
@@ -311,11 +291,10 @@ Ejemplos:
     }, 1000);
   }
 
-  // CORRECCIÓN 1: Función auxiliar para detectar el mejor formato soportado
   getSupportedMimeType() {
     const types = [
       'audio/webm;codecs=opus',
-      'audio/mp4', // Vital para Safari / iOS
+      'audio/mp4',
       'audio/ogg;codecs=opus',
       'audio/webm'
     ];
@@ -328,65 +307,57 @@ Ejemplos:
 
     if (!this.isRecording) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-
-        // CORRECCIÓN 1: Usar formato compatible detectado
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         this.currentMimeType = this.getSupportedMimeType();
         this.mediaRecorder = new MediaRecorder(stream, { mimeType: this.currentMimeType });
         this.audioChunks = [];
 
         this.mediaRecorder.ondataavailable = (event) => {
-          this.audioChunks.push(event.data);
+          if (event.data.size > 0) this.audioChunks.push(event.data);
         };
 
         this.mediaRecorder.onstop = async () => {
-          // CORRECCIÓN 3: Calcular la duración real
           const durationSeconds = (Date.now() - this.recordStartTime) / 1000;
-
-          // CORRECCIÓN 1: Crear Blob con el mimeType correcto y asignar extensión
           const audioBlob = new Blob(this.audioChunks, { type: this.currentMimeType });
-          const fileExtension = this.currentMimeType.includes('mp4') ? 'm4a' : 'webm';
+
+          let fileExtension = 'webm';
+          if (this.currentMimeType.includes('mp4')) fileExtension = 'm4a';
+          if (this.currentMimeType.includes('ogg')) fileExtension = 'ogg';
 
           this.addAudioMessage(audioBlob, durationSeconds);
-
           this.showTypingIndicator();
+
           try {
-            // CORRECCIÓN 2: Enviar extensión
             const transcription = await this.transcribeAudio(audioBlob, fileExtension);
             this.hideTypingIndicator();
-            this.addMessage(transcription, "user");
-            this.addToHistory("user", transcription);
 
-            this.showTypingIndicator();
-            const response = await this.getGroqResponse(transcription);
-            this.hideTypingIndicator();
-            this.addMessage(response, "bot");
-            this.addToHistory("assistant", response);
+            if (transcription) {
+              this.addMessage(transcription, "user");
+              this.addToHistory("user", transcription);
+
+              this.showTypingIndicator();
+              const response = await this.getGroqResponse(transcription);
+              this.hideTypingIndicator();
+              this.addMessage(response, "bot");
+              this.addToHistory("assistant", response);
+            }
           } catch (error) {
-            // CORRECCIÓN 4: Manejo seguro de errores, evita enviar basura al LLM
-            console.error("Fallo en el flujo de voz:", error);
             this.hideTypingIndicator();
-            this.addMessage(
-              "Lo siento, hubo un error procesando el audio. Por favor, intenta de nuevo o escribe tu mensaje.",
-              "bot",
-            );
+            console.error("Flujo de voz error:", error);
+            this.addMessage(`Error de voz: ${error.message}`, "bot");
           }
 
           stream.getTracks().forEach((track) => track.stop());
         };
 
         this.mediaRecorder.start();
-        // CORRECCIÓN 3: Registrar el tiempo de inicio
         this.recordStartTime = Date.now();
-
         this.isRecording = true;
         audioBtn.classList.add("recording");
         indicator.classList.add("active");
       } catch (error) {
-        console.error("Error accessing microphone:", error);
-        alert("No se pudo acceder al micrófono. Verifica los permisos de tu navegador.");
+        console.error("Error micro:", error);
+        alert("No se pudo acceder al micrófono.");
       }
     } else {
       this.mediaRecorder.stop();
@@ -396,37 +367,31 @@ Ejemplos:
     }
   }
 
-  // CORRECCIÓN 2: Idioma, temperatura y extensión dinámica añadidos
-  async transcribeAudio(audioBlob, fileExtension = 'webm') {
+  async transcribeAudio(audioBlob, fileExtension) {
     try {
       const formData = new FormData();
-      formData.append("file", audioBlob, `audio.${fileExtension}`);
+      formData.append("file", audioBlob, `recording.${fileExtension}`);
       formData.append("model", "whisper-large-v3");
-      formData.append("language", "es"); // Forza el español
-      formData.append("temperature", "0.0"); // Reduce alucinaciones con ruido
+      formData.append("language", "es");
+      formData.append("temperature", "0.0");
 
       const response = await fetch(
-        "https://api.groq.com/openai/v1/audio/transcriptions",
+        "/api/groq",
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${this.groqApiKey}`,
-          },
           body: formData,
         },
       );
 
-      // CORRECCIÓN 4: Leer el mensaje de error real de la API si falla
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || "Transcription failed by API");
+        throw new Error(errorData.error?.message || `Error API ${response.status}`);
       }
 
       const data = await response.json();
-      return data.text || "No se pudo transcribir el audio.";
+      return data.text;
     } catch (error) {
-      console.error("Transcription error:", error);
-      throw error; // Lanzamos el error hacia toggleRecording para cortarlo ahí
+      throw error;
     }
   }
 

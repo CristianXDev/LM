@@ -1,8 +1,8 @@
 # LM
 
-<img width="1023" height="599" alt="Screenshot_1" src="https://github.com/user-attachments/assets/afeabe5c-1355-4b9a-8578-f1a4e1e7aec3" />
+<img width="1365" height="767" alt="Screenshot_1" src="https://github.com/user-attachments/assets/ddb57ba5-1119-4d3f-88d4-5fc77aaeaf7d" />
 
-# 💹 LiveMonitor | Seguimiento Financiero en Tiempo Real
+# 💹 LiveMonitor | Seguimiento Financiero en Tiempo Real``
 
 **LiveMonitor (LM)** es una plataforma web moderna diseñada para el seguimiento dinámico de indicadores económicos. El sistema permite visualizar de forma limpia y eficiente las tasas de cambio del **Dólar (USD)** y **Euro (EUR)** frente al **Bolívar (VES)**, comparando los valores oficiales del BCV y el mercado paralelo.
 
