@@ -1,5 +1,3 @@
-// Chatbot LiveMonitor con Integración de API Groq y Correcciones de Audio
-
 class LiveMonitorChatbot {
   constructor() {
     this.isOpen = false;
@@ -7,12 +5,10 @@ class LiveMonitorChatbot {
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.exchangeRates = null;
-    // ADVERTENCIA: Nunca dejes tu API key en el código frontend en producción.
-    this.groqApiKey = "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";
+    this.groqApiKey = "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";
     this.conversationHistory = [];
     this.maxHistory = 10;
 
-    // CORRECCIÓN 1: Variables para el formato y tiempo de audio
     this.currentMimeType = '';
     this.recordStartTime = 0;
 
@@ -311,11 +307,10 @@ Ejemplos:
     }, 1000);
   }
 
-  // CORRECCIÓN 1: Función auxiliar para detectar el mejor formato soportado
   getSupportedMimeType() {
     const types = [
       'audio/webm;codecs=opus',
-      'audio/mp4', // Vital para Safari / iOS
+      'audio/mp4',
       'audio/ogg;codecs=opus',
       'audio/webm'
     ];
@@ -332,7 +327,6 @@ Ejemplos:
           audio: true,
         });
 
-        // CORRECCIÓN 1: Usar formato compatible detectado
         this.currentMimeType = this.getSupportedMimeType();
         this.mediaRecorder = new MediaRecorder(stream, { mimeType: this.currentMimeType });
         this.audioChunks = [];
@@ -342,10 +336,9 @@ Ejemplos:
         };
 
         this.mediaRecorder.onstop = async () => {
-          // CORRECCIÓN 3: Calcular la duración real
+l
           const durationSeconds = (Date.now() - this.recordStartTime) / 1000;
 
-          // CORRECCIÓN 1: Crear Blob con el mimeType correcto y asignar extensión
           const audioBlob = new Blob(this.audioChunks, { type: this.currentMimeType });
           const fileExtension = this.currentMimeType.includes('mp4') ? 'm4a' : 'webm';
 
@@ -353,7 +346,7 @@ Ejemplos:
 
           this.showTypingIndicator();
           try {
-            // CORRECCIÓN 2: Enviar extensión
+
             const transcription = await this.transcribeAudio(audioBlob, fileExtension);
             this.hideTypingIndicator();
             this.addMessage(transcription, "user");
@@ -365,7 +358,7 @@ Ejemplos:
             this.addMessage(response, "bot");
             this.addToHistory("assistant", response);
           } catch (error) {
-            // CORRECCIÓN 4: Manejo seguro de errores, evita enviar basura al LLM
+
             console.error("Fallo en el flujo de voz:", error);
             this.hideTypingIndicator();
             this.addMessage(
@@ -378,7 +371,6 @@ Ejemplos:
         };
 
         this.mediaRecorder.start();
-        // CORRECCIÓN 3: Registrar el tiempo de inicio
         this.recordStartTime = Date.now();
 
         this.isRecording = true;
@@ -396,14 +388,13 @@ Ejemplos:
     }
   }
 
-  // CORRECCIÓN 2: Idioma, temperatura y extensión dinámica añadidos
   async transcribeAudio(audioBlob, fileExtension = 'webm') {
     try {
       const formData = new FormData();
       formData.append("file", audioBlob, `audio.${fileExtension}`);
       formData.append("model", "whisper-large-v3");
-      formData.append("language", "es"); // Forza el español
-      formData.append("temperature", "0.0"); // Reduce alucinaciones con ruido
+      formData.append("language", "es");
+      formData.append("temperature", "0.0");
 
       const response = await fetch(
         "https://api.groq.com/openai/v1/audio/transcriptions",
@@ -416,7 +407,6 @@ Ejemplos:
         },
       );
 
-      // CORRECCIÓN 4: Leer el mensaje de error real de la API si falla
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error?.message || "Transcription failed by API");
@@ -426,7 +416,7 @@ Ejemplos:
       return data.text || "No se pudo transcribir el audio.";
     } catch (error) {
       console.error("Transcription error:", error);
-      throw error; // Lanzamos el error hacia toggleRecording para cortarlo ahí
+      throw error;
     }
   }
 
