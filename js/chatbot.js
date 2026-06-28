@@ -5,6 +5,7 @@ class LiveMonitorChatbot {
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.exchangeRates = null;
+    // Nota de seguridad: En producción, es mejor manejar las API keys desde un backend.
     this.groqApiKey = "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";
     this.conversationHistory = [];
     this.maxHistory = 10;
@@ -336,9 +337,10 @@ Ejemplos:
         };
 
         this.mediaRecorder.onstop = async () => {
-l
+          // ERROR SOLUCIONADO: Se eliminó la "l" suelta que rompía el código aquí
           const durationSeconds = (Date.now() - this.recordStartTime) / 1000;
 
+          // Creamos el blob.
           const audioBlob = new Blob(this.audioChunks, { type: this.currentMimeType });
           const fileExtension = this.currentMimeType.includes('mp4') ? 'm4a' : 'webm';
 
@@ -346,19 +348,19 @@ l
 
           this.showTypingIndicator();
           try {
-
+            // Intentamos transcribir
             const transcription = await this.transcribeAudio(audioBlob, fileExtension);
             this.hideTypingIndicator();
             this.addMessage(transcription, "user");
             this.addToHistory("user", transcription);
 
+            // Una vez transcrito, enviamos al LLM para la respuesta
             this.showTypingIndicator();
             const response = await this.getGroqResponse(transcription);
             this.hideTypingIndicator();
             this.addMessage(response, "bot");
             this.addToHistory("assistant", response);
           } catch (error) {
-
             console.error("Fallo en el flujo de voz:", error);
             this.hideTypingIndicator();
             this.addMessage(
@@ -367,6 +369,7 @@ l
             );
           }
 
+          // Detenemos los tracks del micrófono para que no se quede la luz roja encendida en la pestaña
           stream.getTracks().forEach((track) => track.stop());
         };
 
@@ -381,6 +384,7 @@ l
         alert("No se pudo acceder al micrófono. Verifica los permisos de tu navegador.");
       }
     } else {
+      // Detenemos la grabación, esto dispara el evento onstop
       this.mediaRecorder.stop();
       this.isRecording = false;
       audioBtn.classList.remove("recording");
@@ -391,6 +395,7 @@ l
   async transcribeAudio(audioBlob, fileExtension = 'webm') {
     try {
       const formData = new FormData();
+      // Whisper necesita un nombre de archivo con la extensión correcta para procesarlo bien
       formData.append("file", audioBlob, `audio.${fileExtension}`);
       formData.append("model", "whisper-large-v3");
       formData.append("language", "es");
@@ -402,6 +407,8 @@ l
           method: "POST",
           headers: {
             Authorization: `Bearer ${this.groqApiKey}`,
+            // IMPORTANTE: NO establezcas Content-Type a mano cuando usas FormData.
+            // Fetch se encarga de poner el boundary correcto automáticamente.
           },
           body: formData,
         },
