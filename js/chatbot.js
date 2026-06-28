@@ -5,8 +5,10 @@ class LiveMonitorChatbot {
     this.mediaRecorder = null;
     this.audioChunks = [];
     this.exchangeRates = null;
-    // Nota de seguridad: En producción, es mejor manejar las API keys desde un backend.
-    this.groqApiKey = "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";
+
+    // La API Key fue eliminada de aquí por seguridad.
+    // Ahora las peticiones se hacen a tu propio backend en Vercel.
+
     this.conversationHistory = [];
     this.maxHistory = 10;
 
@@ -167,31 +169,21 @@ Ejemplos:
     ];
 
     try {
-      const response = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.groqApiKey}`,
-          },
-          body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            messages: messages,
-            temperature: 0.3,
-            max_tokens: 150,
-          }),
+      // Cambio principal: ahora consultamos a tu propia API en Vercel
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
         },
-      );
+        body: JSON.stringify({ messages: messages }),
+      });
 
       if (!response.ok) throw new Error("API request failed");
 
       const data = await response.json();
-      return (
-        data.choices[0]?.message?.content || "No pude generar una respuesta."
-      );
+      return data.reply || "No pude generar una respuesta.";
     } catch (error) {
-      console.error("Groq API error:", error);
+      console.error("Internal API error:", error);
       throw error;
     }
   }
@@ -337,10 +329,8 @@ Ejemplos:
         };
 
         this.mediaRecorder.onstop = async () => {
-          // ERROR SOLUCIONADO: Se eliminó la "l" suelta que rompía el código aquí
           const durationSeconds = (Date.now() - this.recordStartTime) / 1000;
 
-          // Creamos el blob.
           const audioBlob = new Blob(this.audioChunks, { type: this.currentMimeType });
           const fileExtension = this.currentMimeType.includes('mp4') ? 'm4a' : 'webm';
 
@@ -348,13 +338,11 @@ Ejemplos:
 
           this.showTypingIndicator();
           try {
-            // Intentamos transcribir
             const transcription = await this.transcribeAudio(audioBlob, fileExtension);
             this.hideTypingIndicator();
             this.addMessage(transcription, "user");
             this.addToHistory("user", transcription);
 
-            // Una vez transcrito, enviamos al LLM para la respuesta
             this.showTypingIndicator();
             const response = await this.getGroqResponse(transcription);
             this.hideTypingIndicator();
@@ -369,7 +357,6 @@ Ejemplos:
             );
           }
 
-          // Detenemos los tracks del micrófono para que no se quede la luz roja encendida en la pestaña
           stream.getTracks().forEach((track) => track.stop());
         };
 
@@ -384,7 +371,6 @@ Ejemplos:
         alert("No se pudo acceder al micrófono. Verifica los permisos de tu navegador.");
       }
     } else {
-      // Detenemos la grabación, esto dispara el evento onstop
       this.mediaRecorder.stop();
       this.isRecording = false;
       audioBtn.classList.remove("recording");
@@ -395,28 +381,17 @@ Ejemplos:
   async transcribeAudio(audioBlob, fileExtension = 'webm') {
     try {
       const formData = new FormData();
-      // Whisper necesita un nombre de archivo con la extensión correcta para procesarlo bien
       formData.append("file", audioBlob, `audio.${fileExtension}`);
-      formData.append("model", "whisper-large-v3");
-      formData.append("language", "es");
-      formData.append("temperature", "0.0");
 
-      const response = await fetch(
-        "https://api.groq.com/openai/v1/audio/transcriptions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${this.groqApiKey}`,
-            // IMPORTANTE: NO establezcas Content-Type a mano cuando usas FormData.
-            // Fetch se encarga de poner el boundary correcto automáticamente.
-          },
-          body: formData,
-        },
-      );
+      // Cambio principal: Enviamos el archivo de audio a nuestra propia API
+      const response = await fetch("/api/transcribe", {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || "Transcription failed by API");
+        throw new Error(errorData.error || "Transcription failed by internal API");
       }
 
       const data = await response.json();
