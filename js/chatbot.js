@@ -6,9 +6,6 @@ class LiveMonitorChatbot {
     this.audioChunks = [];
     this.exchangeRates = null;
 
-    // La API Key fue eliminada de aquí por seguridad.
-    // Ahora las peticiones se hacen a tu propio backend en Vercel.
-
     this.conversationHistory = [];
     this.maxHistory = 10;
 
@@ -383,7 +380,11 @@ Ejemplos:
       const formData = new FormData();
       formData.append("file", audioBlob, `audio.${fileExtension}`);
 
-      // Cambio principal: Enviamos el archivo de audio a nuestra propia API
+      // ¡ESTO ES LO QUE FALTABA! Los parámetros obligatorios de Groq
+      formData.append("model", "whisper-large-v3");
+      formData.append("language", "es");
+      formData.append("temperature", "0.0");
+
       const response = await fetch("/api/transcribe", {
         method: "POST",
         body: formData,
